@@ -17,6 +17,7 @@ const (
 
 type repository interface {
 	Create(*pb.Consignment) (*pb.Consignment, error)
+	GetAll() []*pb.Consignment
 }
 
 // Repository -- dummy repository. Will be updated later.
@@ -34,6 +35,11 @@ func (repo *Repository) Create(consignment *pb.Consignment) (*pb.Consignment, er
 	return consignment, nil
 }
 
+// GetAll consignments
+func (repo *Repository) GetAll() []*pb.Consignment {
+	return repo.consignments
+}
+
 // Service implements all the methods to satisfy the service
 type service struct {
 	repo repository
@@ -47,7 +53,13 @@ func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment) (*
 		return nil, err
 	}
 
-	return &pb.Response{Created: true, Consignemnt: consignment}, nil
+	return &pb.Response{Created: true, Consignment: consignment}, nil
+}
+
+// GetConsignments -
+func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest) (*pb.Response, error) {
+	consignments := s.repo.GetAll()
+	return &pb.Response{Consignments: consignments}, nil
 }
 
 func main() {
@@ -56,7 +68,7 @@ func main() {
 	// Setup gRPC server
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatal("failed to listen: %v", err)
+		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 
@@ -68,6 +80,6 @@ func main() {
 
 	log.Println("Running on port: ", port)
 	if err := s.Serve(lis); err != nil {
-		log.Fatal("failed to serve: %v", err)
+		log.Fatalf("failed to serve: %v", err)
 	}
 }
