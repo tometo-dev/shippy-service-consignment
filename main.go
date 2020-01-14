@@ -72,7 +72,7 @@ func main() {
 	}
 	s := grpc.NewServer()
 
-	// Register our serice with gRPC server
+	// Register our service with gRPC server
 	pb.RegisterShippingServiceServer(s, &service{repo})
 
 	// Register reflection service on gRPC server
