@@ -1,6 +1,6 @@
-FROM golang:latest as builder
-# RUN apk update && apk upgrade && apk add --no-cache git
-RUN mkdir /app
+FROM golang:alpine as builder
+RUN apk update && apk upgrade && apk add --no-cache git
+RUN apk add --no-cache gcc musl-dev linux-headers
 WORKDIR /app
 ENV GO111MODULE=on
 COPY . .
