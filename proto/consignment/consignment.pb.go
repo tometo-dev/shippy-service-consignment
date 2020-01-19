@@ -9,12 +9,6 @@ import (
 	math "math"
 )
 
-import (
-	client "github.com/micro/go-micro/client"
-	server "github.com/micro/go-micro/server"
-	context "golang.org/x/net/context"
-)
-
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
@@ -283,79 +277,4 @@ var fileDescriptor_e5e5ab05dfa973d5 = []byte{
 	0x2e, 0x58, 0x0a, 0x83, 0x19, 0x5a, 0x2f, 0x6a, 0xd8, 0xe8, 0x24, 0x7b, 0x5c, 0xd4, 0xd9, 0x4b,
 	0xde, 0x3b, 0xee, 0x05, 0x3e, 0xfe, 0x04, 0x00, 0x00, 0xff, 0xff, 0x65, 0x3e, 0x9a, 0xa6, 0xa8,
 	0x02, 0x00, 0x00,
-}
-
-// Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ client.Option
-var _ server.Option
-
-// Client API for ShippingService service
-
-type ShippingServiceClient interface {
-	CreateConsignment(ctx context.Context, in *Consignment, opts ...client.CallOption) (*Response, error)
-	// The new created method
-	GetConsignments(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*Response, error)
-}
-
-type shippingServiceClient struct {
-	c           client.Client
-	serviceName string
-}
-
-func NewShippingServiceClient(serviceName string, c client.Client) ShippingServiceClient {
-	if c == nil {
-		c = client.NewClient()
-	}
-	if len(serviceName) == 0 {
-		serviceName = "consignment"
-	}
-	return &shippingServiceClient{
-		c:           c,
-		serviceName: serviceName,
-	}
-}
-
-func (c *shippingServiceClient) CreateConsignment(ctx context.Context, in *Consignment, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.serviceName, "ShippingService.CreateConsignment", in)
-	out := new(Response)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *shippingServiceClient) GetConsignments(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.serviceName, "ShippingService.GetConsignments", in)
-	out := new(Response)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Server API for ShippingService service
-
-type ShippingServiceHandler interface {
-	CreateConsignment(context.Context, *Consignment, *Response) error
-	// The new created method
-	GetConsignments(context.Context, *GetRequest, *Response) error
-}
-
-func RegisterShippingServiceHandler(s server.Server, hdlr ShippingServiceHandler, opts ...server.HandlerOption) {
-	s.Handle(s.NewHandler(&ShippingService{hdlr}, opts...))
-}
-
-type ShippingService struct {
-	ShippingServiceHandler
-}
-
-func (h *ShippingService) CreateConsignment(ctx context.Context, in *Consignment, out *Response) error {
-	return h.ShippingServiceHandler.CreateConsignment(ctx, in, out)
-}
-
-func (h *ShippingService) GetConsignments(ctx context.Context, in *GetRequest, out *Response) error {
-	return h.ShippingServiceHandler.GetConsignments(ctx, in, out)
 }
